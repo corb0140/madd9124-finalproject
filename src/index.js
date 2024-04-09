@@ -14,7 +14,7 @@ require("./utils/passport");
 const crapRouter = require("./routers/crapRouter");
 const authRouter = require("./routers/authRouter");
 const { errorHandler } = require("./middlewares/errors");
-const sanitizedBody = require("./middlewares/sanitizedBody");
+const sanitizeBody = require("./middlewares/sanitizeBody");
 const logger = require("./utils/logger");
 
 const app = express();
@@ -23,7 +23,7 @@ app.use(morgan("tiny"));
 app.use(express.json());
 
 app.use(expressMongoSanitize());
-app.use(sanitizedBody);
+app.use(sanitizeBody);
 
 app.use(
   cors({
