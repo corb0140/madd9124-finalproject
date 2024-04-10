@@ -60,6 +60,34 @@ const agree = async (req, res, next) => {
   }
 };
 
+const reset = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const ownerId = req.user._id.toString();
+    const resetCrap = await crapService.reset(id, ownerId);
+
+    res.json({
+      data: resetCrap,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const flush = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const ownerId = req.user._id.toString();
+    const flushedCrap = await crapService.flush(id, ownerId);
+
+    res.json({
+      data: flushedCrap,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 const getAllCrap = async (_req, res) => {
   const crap = await crapService.getAllCrap();
 
@@ -133,4 +161,6 @@ module.exports = {
   interested,
   suggest,
   agree,
+  reset,
+  flush,
 };

@@ -14,6 +14,10 @@ const createCrap = async (body) => {
   const crap = new Crap(body);
 
   crap.status = "available";
+  crap.location = {
+    type: "Point",
+    coordinates: [body.longitude, body.latitude],
+  };
 
   await crap.save();
 
@@ -48,6 +52,10 @@ const suggest = async (id, ownerId) => {
         throw new ForbiddenError("You are not allowed to suggest this crap");
       } else {
         foundCrap.status = "scheduled";
+        foundCrap.suggestion = {
+          address: "baseline. ottawa",
+          date: new Date(),
+        };
         await foundCrap.save();
         return foundCrap;
       }
@@ -67,12 +75,66 @@ const agree = async (id, ownerId) => {
       if (foundCrap.owner.toString() !== ownerId.toString()) {
         throw new ForbiddenError("You are not allowed to agree to this crap");
       } else {
-        foundCrap.status = "agree";
+        const within = foundCrap.location.within(
+          foundCrap.location,
+          1000,
+          "meters"
+        );
+
+        if (within) {
+          foundCrap.status = "agreed";
+          await foundCrap.save();
+          return foundCrap;
+        } else {
+          foundCrap.status = "interested";
+          await foundCrap.save();
+          return foundCrap;
+        }
+      }
+    } else {
+      throw new BadRequestError("Crap is not scheduled");
+    }
+  }
+};
+
+const reset = async (id, ownerId) => {
+  const foundCrap = await Crap.findById(id);
+
+  if (foundCrap) {
+    const status = foundCrap.status;
+
+    if (status !== "flushed") {
+      if (foundCrap.owner.toString() !== ownerId.toString()) {
+        throw new ForbiddenError("You are not allowed to reset this crap");
+      } else {
+        foundCrap.status = "available";
+        foundCrap.buyer = null;
+        foundCrap.suggestion = null;
         await foundCrap.save();
         return foundCrap;
       }
     } else {
-      throw new BadRequestError("Crap is not scheduled");
+      throw new BadRequestError("Crap is not agreed");
+    }
+  }
+};
+
+const flush = async (id, ownerId) => {
+  const foundCrap = await Crap.findById(id);
+
+  if (foundCrap) {
+    const status = foundCrap.status;
+
+    if (status === "agreed") {
+      if (foundCrap.owner.toString() !== ownerId.toString()) {
+        throw new ForbiddenError("You are not allowed to flush this crap");
+      } else {
+        foundCrap.status = "flushed";
+        await foundCrap.save();
+        return foundCrap;
+      }
+    } else {
+      throw new BadRequestError("Crap is not agreed");
     }
   }
 };
@@ -144,4 +206,6 @@ module.exports = {
   interested,
   suggest,
   agree,
+  reset,
+  flush,
 };

@@ -8,7 +8,6 @@ const isValidObjectId = require("../middlewares/isValidObjectId");
 const validateCrapData = require("../middlewares/validateCrapData");
 const attachImages = require("../middlewares/attachImages");
 const sanitizeBody = require("../middlewares/sanitizeBody");
-const crap = require("../models/crap");
 
 const crapRouter = Router();
 
@@ -24,9 +23,8 @@ crapRouter.post("/", validateCrapData, crapController.createCrap);
 crapRouter.post("/:id/interested", isValidObjectId, crapController.interested);
 crapRouter.post("/:id/suggest", isValidObjectId, crapController.suggest);
 crapRouter.post("/:id/agree", isValidObjectId, crapController.agree);
-// crapRouter.post("/:id/disagree", isValidObjectId, crapController.disagree);
-// crapRouter.post("/:id/reset", isValidObjectId, crapController.reset);
-// crapRouter.post("/:id/flush", isValidObjectId, crapController.flush);
+crapRouter.post("/:id/reset", isValidObjectId, crapController.reset);
+crapRouter.post("/:id/flush", isValidObjectId, crapController.flush);
 
 crapRouter.put(
   "/:id",
