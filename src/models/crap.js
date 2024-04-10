@@ -32,7 +32,15 @@ const crapSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["available", "flush"],
+      enum: [
+        "available",
+        "interested",
+        "suggest",
+        "agree",
+        "disagree",
+        "reset",
+        "flush",
+      ],
       default: "available",
       required: true,
     },
