@@ -1,4 +1,4 @@
-const debug = require("debug")("final-project:middleware:sanitizedBody");
+const debug = require("debug")("final-project:middleware:sanitizeBody");
 const xss = require("xss");
 
 const sanitize = (str) =>
