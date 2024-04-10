@@ -15,6 +15,7 @@ const createCrap = async (body) => {
   const crap = new Crap(body);
 
   crap.status = "available";
+
   const lat = crap.location.coordinates[0];
   const long = crap.location.coordinates[1];
   crap.location = {
@@ -55,10 +56,12 @@ const suggest = async (id, ownerId) => {
         throw new ForbiddenError("You are not allowed to suggest this crap");
       } else {
         foundCrap.status = "scheduled";
+
         foundCrap.suggestion = {
-          address: "baseline. ottawa",
+          address: "baseline, ottawa",
           date: new Date(),
         };
+
         await foundCrap.save();
         return foundCrap;
       }
