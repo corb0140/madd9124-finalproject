@@ -4,7 +4,7 @@ const crapService = require("../services/crapService");
 
 const createCrap = async (req, res, next) => {
   try {
-    const ownerId = req.user._id;
+    const ownerId = req.user._id.toString();
     const newCrap = await crapService.createCrap({
       ...req.sanitizeBody,
       ownerId,
@@ -26,6 +26,34 @@ const interested = async (req, res, next) => {
 
     res.json({
       data: interestedInCrap,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const suggest = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const ownerId = req.user._id.toString();
+    const suggestedCrap = await crapService.suggest(id, ownerId);
+
+    res.json({
+      data: suggestedCrap,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const agree = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const ownerId = req.user._id.toString();
+    const agreedCrap = await crapService.agree(id, ownerId);
+
+    res.json({
+      data: agreedCrap,
     });
   } catch (err) {
     next(err);
@@ -102,4 +130,7 @@ module.exports = {
   getMyCrap,
   updateCrap,
   deleteCrap,
+  interested,
+  suggest,
+  agree,
 };

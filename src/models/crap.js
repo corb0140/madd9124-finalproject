@@ -35,13 +35,12 @@ const crapSchema = new mongoose.Schema(
       enum: [
         "available",
         "interested",
-        "suggest",
+        "scheduled",
         "agree",
         "disagree",
         "reset",
         "flush",
       ],
-      default: "available",
       required: true,
     },
     owner: {

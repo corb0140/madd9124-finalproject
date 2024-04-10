@@ -21,9 +21,9 @@ crapRouter.get("/:id", isValidObjectId, crapController.getOneCrap);
 crapRouter.get("/me", crapController.getMyCrap);
 
 crapRouter.post("/", validateCrapData, crapController.createCrap);
-// crapRouter.post("/:id/interested", isValidObjectId, crapController.interested);
-// crapRouter.post("/:id/suggest", isValidObjectId, crapController.suggest);
-// crapRouter.post("/:id/agree", isValidObjectId, crapController.agree);
+crapRouter.post("/:id/interested", isValidObjectId, crapController.interested);
+crapRouter.post("/:id/suggest", isValidObjectId, crapController.suggest);
+crapRouter.post("/:id/agree", isValidObjectId, crapController.agree);
 // crapRouter.post("/:id/disagree", isValidObjectId, crapController.disagree);
 // crapRouter.post("/:id/reset", isValidObjectId, crapController.reset);
 // crapRouter.post("/:id/flush", isValidObjectId, crapController.flush);

@@ -1,6 +1,10 @@
 "use strict";
 
-const { NotFoundError, ForbiddenError } = require("../middlewares/errors");
+const {
+  NotFoundError,
+  ForbiddenError,
+  BadRequestError,
+} = require("../middlewares/errors");
 const debug = require("debug")("petR-Authentication:service/petService");
 const Crap = require("../models/crap");
 
@@ -9,9 +13,68 @@ const createCrap = async (body) => {
 
   const crap = new Crap(body);
 
+  crap.status = "available";
+
   await crap.save();
 
   return crap;
+};
+
+const interested = async (id, ownerId) => {
+  const foundCrap = await Crap.findById(id);
+
+  if (foundCrap) {
+    const status = foundCrap.status;
+
+    if (status === "available") {
+      foundCrap.status = "interested";
+      foundCrap.buyer = ownerId;
+      await foundCrap.save();
+      return foundCrap;
+    } else {
+      throw new BadRequestError("Crap is not available");
+    }
+  }
+};
+
+const suggest = async (id, ownerId) => {
+  const foundCrap = await Crap.findById(id);
+
+  if (foundCrap) {
+    const status = foundCrap.status;
+
+    if (status === "interested") {
+      if (foundCrap.buyer.toString() !== ownerId.toString()) {
+        throw new ForbiddenError("You are not allowed to suggest this crap");
+      } else {
+        foundCrap.status = "scheduled";
+        await foundCrap.save();
+        return foundCrap;
+      }
+    } else {
+      throw new BadRequestError("No one is interested in this crap");
+    }
+  }
+};
+
+const agree = async (id, ownerId) => {
+  const foundCrap = await Crap.findById(id);
+
+  if (foundCrap) {
+    const status = foundCrap.status;
+
+    if (status === "scheduled") {
+      if (foundCrap.owner.toString() !== ownerId.toString()) {
+        throw new ForbiddenError("You are not allowed to agree to this crap");
+      } else {
+        foundCrap.status = "agree";
+        await foundCrap.save();
+        return foundCrap;
+      }
+    } else {
+      throw new BadRequestError("Crap is not scheduled");
+    }
+  }
 };
 
 const getAllCrap = async () => {
@@ -78,4 +141,7 @@ module.exports = {
   getMyCrap,
   updateCrap,
   deleteCrap,
+  interested,
+  suggest,
+  agree,
 };
