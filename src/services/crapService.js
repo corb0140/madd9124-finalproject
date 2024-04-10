@@ -15,9 +15,11 @@ const createCrap = async (body) => {
   const crap = new Crap(body);
 
   crap.status = "available";
+  const lat = crap.location.coordinates[0];
+  const long = crap.location.coordinates[1];
   crap.location = {
     type: "Point",
-    coordinates: [body.longitude, body.latitude],
+    coordinates: [lat, long],
   };
 
   await crap.save();

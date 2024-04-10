@@ -7,7 +7,7 @@ const { UnauthenticatedError } = require("../middlewares/errors");
 const generateToken = (_id) =>
   jwt.sign({ id: _id.toString() }, process.env.JWT_SECRET, {
     algorithm: "HS256",
-    expiresIn: "14 days",
+    expiresIn: "7 days",
   });
 
 const login = async (username, password) => {
