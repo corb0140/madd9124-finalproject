@@ -151,10 +151,18 @@ const flush = async (id, ownerId) => {
   }
 };
 
-const getAllCrap = async () => {
-  const crap = await Crap.find({}).populate("owner");
+const getAllCrap = async (query, lat, long, distance, show_taken) => {
+  show_taken = true;
 
-  return crap;
+  if (query && show_taken === false) {
+    const crap = await Crap.find({ title: query, status: "available" });
+    return crap;
+  }
+
+  if (query && show_taken === true) {
+    const crap = await Crap.find({ title: query, status: { $ne: "flushed" } });
+    return crap;
+  }
 };
 
 const getOneCrap = async (id) => {

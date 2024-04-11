@@ -88,12 +88,24 @@ const flush = async (req, res, next) => {
   }
 };
 
-const getAllCrap = async (_req, res) => {
-  const crap = await crapService.getAllCrap();
+const getAllCrap = async (req, res, next) => {
+  try {
+    const { query, lat, long, distance, show_taken } = req.query;
 
-  res.json({
-    data: crap,
-  });
+    const crap = await crapService.getAllCrap(
+      query,
+      lat,
+      long,
+      distance,
+      show_taken
+    );
+
+    res.json({
+      data: crap,
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
 const getOneCrap = async (req, res, next) => {
