@@ -28,8 +28,6 @@ const createCrap = async (body, files) => {
   const urls = await imageService.uploadImages(files);
   crap.images = urls;
 
-  console.log(urls);
-
   await crap.save();
 
   return crap;
@@ -196,6 +194,8 @@ const getAllCrap = async (query, lat, long, distance, show_taken) => {
 };
 
 const getOneCrap = async (id, ownerId) => {
+  const crap = await Crap.findById(id);
+
   if (crap.owner.toString() === ownerId) {
     return crap.populate("owner");
   }
@@ -206,7 +206,6 @@ const getOneCrap = async (id, ownerId) => {
       .populate("owner");
   }
 
-  const crap = await Crap.findById(id);
   if (!crap) {
     throw new NotFoundError("Crap not found");
   }
