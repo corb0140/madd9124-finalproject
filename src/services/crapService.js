@@ -163,10 +163,14 @@ const getAllCrap = async (query, lat, long, distance, show_taken) => {
       },
       title: query,
       status: "available",
-    });
+    })
+      .select("-location -buyer -suggestion")
+      .populate("owner");
 
     return crapResults;
   }
+
+  console.log(Crap.find({ title: query }).select("-location"));
 
   if (query && show_taken === "false") {
     const crapResults = await Crap.find({
@@ -178,7 +182,9 @@ const getAllCrap = async (query, lat, long, distance, show_taken) => {
       },
       title: query,
       status: { $ne: "flushed" },
-    });
+    })
+      .select("-location -buyer -suggestion")
+      .populate("owner");
 
     return crapResults;
   }
