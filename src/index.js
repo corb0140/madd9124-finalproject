@@ -8,14 +8,14 @@ const compression = require("compression");
 const cors = require("cors");
 const helmet = require("helmet");
 
-require("./src/models/db");
-require("./src/utils/passport");
+require("./models/db");
+require("./utils/passport");
 
-const crapRouter = require("./src/routers/crapRouter");
-const authRouter = require("./src/routers/authRouter");
-const { errorHandler } = require("./src/middlewares/errors");
-const sanitizeBody = require("./src/middlewares/sanitizeBody");
-const logger = require("./src/utils/logger");
+const crapRouter = require("./routers/crapRouter");
+const authRouter = require("./routers/authRouter");
+const { errorHandler } = require("./middlewares/errors");
+const sanitizeBody = require("./middlewares/sanitizeBody");
+const logger = require("./utils/logger");
 
 const app = express();
 
