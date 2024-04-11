@@ -111,7 +111,8 @@ const getAllCrap = async (req, res, next) => {
 const getOneCrap = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const crap = await crapService.getOneCrap(id);
+    const ownerId = req.user._id.toString();
+    const crap = await crapService.getOneCrap(id, ownerId);
 
     res.json({
       data: crap,

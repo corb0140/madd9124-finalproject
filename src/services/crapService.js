@@ -170,8 +170,6 @@ const getAllCrap = async (query, lat, long, distance, show_taken) => {
     return crapResults;
   }
 
-  console.log(Crap.find({ title: query }).select("-location"));
-
   if (query && show_taken === "false") {
     const crapResults = await Crap.find({
       location: {
@@ -190,14 +188,21 @@ const getAllCrap = async (query, lat, long, distance, show_taken) => {
   }
 };
 
-const getOneCrap = async (id) => {
-  const crap = await Crap.findById(id).populate("owner");
+const getOneCrap = async (id, ownerId) => {
+  if (crap.owner.toString() === ownerId) {
+    return crap.populate("owner");
+  }
 
+  if (crap.owner.toString() !== ownerId) {
+    return Crap.findById(id)
+      .select("-location -buyer -suggestion")
+      .populate("owner");
+  }
+
+  const crap = await Crap.findById(id);
   if (!crap) {
     throw new NotFoundError("Crap not found");
   }
-
-  return crap;
 };
 
 const getMyCrap = async (owner) => {
