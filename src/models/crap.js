@@ -12,6 +12,8 @@ const pointSchema = new mongoose.Schema(
   { _id: false }
 );
 
+pointSchema.index({ coordinates: "2dsphere" });
+
 const suggestionSchema = new mongoose.Schema(
   {
     address: {
@@ -56,5 +58,7 @@ const crapSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+crapSchema.index({ location: "2dsphere" });
 
 module.exports = mongoose.model("Crap", crapSchema);

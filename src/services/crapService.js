@@ -81,17 +81,23 @@ const agree = async (id, ownerId) => {
       if (foundCrap.owner.toString() !== ownerId.toString()) {
         throw new ForbiddenError("You are not allowed to agree to this crap");
       } else {
-        const within = foundCrap.location.within(
-          foundCrap.location,
-          1000,
-          "meters"
-        );
+        const crapLocation = foundCrap.location.coordinates;
+
+        const within = await Crap.findOne({
+          location: {
+            $geoWithin: {
+              $centerSphere: [crapLocation, 1 / 6378.1],
+            },
+          },
+        });
 
         if (within) {
+          console.log("location is within 1km");
           foundCrap.status = "agreed";
           await foundCrap.save();
           return foundCrap;
         } else {
+          console.log("location is not within 1km");
           foundCrap.status = "interested";
           await foundCrap.save();
           return foundCrap;
