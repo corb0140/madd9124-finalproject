@@ -32,10 +32,10 @@ const crapSchema = new mongoose.Schema(
     title: { type: String, required: true, minLength: 3, maxLength: 255 },
     description: { type: String, required: true, minLength: 3, maxLength: 255 },
     location: { type: pointSchema, required: true },
-    // images: {
-    //   type: [String],
-    //   validate: [(urls) => urls.length > 0, "empty!! Please insert an image"],
-    // },
+    images: {
+      type: [String],
+      validate: [(urls) => urls.length > 0, "empty!! Please insert an image"],
+    },
     status: {
       type: String,
       enum: [

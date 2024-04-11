@@ -9,7 +9,9 @@ const {
 const debug = require("debug")("petR-Authentication:service/petService");
 const Crap = require("../models/crap");
 
-const createCrap = async (body) => {
+const imageService = require("./imageService");
+
+const createCrap = async (body, files) => {
   debug(body);
 
   const crap = new Crap(body);
@@ -22,6 +24,11 @@ const createCrap = async (body) => {
     type: "Point",
     coordinates: [lat, long],
   };
+
+  const urls = await imageService.uploadImages(files);
+  crap.images = urls;
+
+  console.log(urls);
 
   await crap.save();
 

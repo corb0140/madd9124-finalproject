@@ -5,10 +5,13 @@ const crapService = require("../services/crapService");
 const createCrap = async (req, res, next) => {
   try {
     const ownerId = req.user._id.toString();
-    const newCrap = await crapService.createCrap({
-      ...req.sanitizeBody,
-      ownerId,
-    });
+    const newCrap = await crapService.createCrap(
+      {
+        ...req.sanitizeBody,
+        ownerId,
+      },
+      req.files
+    );
 
     res.status(201).json({
       data: newCrap,
