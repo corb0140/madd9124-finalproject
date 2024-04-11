@@ -85,8 +85,9 @@ const agree = async (id, ownerId) => {
 
         const within = await Crap.findOne({
           location: {
-            $geoWithin: {
-              $centerSphere: [crapLocation, 1 / 6378.1],
+            $near: {
+              $geometry: { type: "Point", coordinates: crapLocation },
+              $maxDistance: 1000,
             },
           },
         });
@@ -152,16 +153,34 @@ const flush = async (id, ownerId) => {
 };
 
 const getAllCrap = async (query, lat, long, distance, show_taken) => {
-  show_taken = true;
+  if (query && show_taken === "true") {
+    const crapResults = await Crap.find({
+      location: {
+        $near: {
+          $geometry: { type: "Point", coordinates: [lat, long] },
+          $maxDistance: distance,
+        },
+      },
+      title: query,
+      status: "available",
+    });
 
-  if (query && show_taken === false) {
-    const crap = await Crap.find({ title: query, status: "available" });
-    return crap;
+    return crapResults;
   }
 
-  if (query && show_taken === true) {
-    const crap = await Crap.find({ title: query, status: { $ne: "flushed" } });
-    return crap;
+  if (query && show_taken === "false") {
+    const crapResults = await Crap.find({
+      location: {
+        $near: {
+          $geometry: { type: "Point", coordinates: [lat, long] },
+          $maxDistance: distance,
+        },
+      },
+      title: query,
+      status: { $ne: "flushed" },
+    });
+
+    return crapResults;
   }
 };
 
