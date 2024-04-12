@@ -39,7 +39,8 @@ const suggest = async (req, res, next) => {
   try {
     const { id } = req.params;
     const ownerId = req.user._id.toString();
-    const suggestedCrap = await crapService.suggest(id, ownerId, req.body);
+    const sanitizeBody = req.sanitizeBody;
+    const suggestedCrap = await crapService.suggest(id, ownerId, sanitizeBody);
 
     res.json({
       data: suggestedCrap,
