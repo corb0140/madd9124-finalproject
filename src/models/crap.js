@@ -39,13 +39,8 @@ const crapSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: {
-        AVAILABLE: "AVAILABLE",
-        INTERESTED: "INTERESTED",
-        SCHEDULED: "SCHEDULED",
-        AGREED: "AGREED",
-        FLUSHED: "FLUSHED",
-      },
+      enum: ["AVAILABLE", "INTERESTED", "SCHEDULED", "AGREED", "FLUSHED"],
+
       required: true,
     },
     owner: {

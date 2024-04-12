@@ -172,10 +172,17 @@ const getAllCrap = async (query, lat, long, distance, show_taken) => {
       title: query,
       status: "AVAILABLE",
     })
-      .select("-location -buyer -suggestion")
+      .select(" -buyer -suggestion")
       .populate("owner");
 
-    return crapResults;
+    const sort = crapResults.sort((a, b) => {
+      const distanceA = a.location.coordinates[0] - lat;
+      const distanceB = b.location.coordinates[0] - lat;
+
+      return distanceA - distanceB;
+    });
+
+    return sort;
   }
 
   if (query && show_taken === "false") {
