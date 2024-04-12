@@ -224,7 +224,9 @@ const getOneCrap = async (id, ownerId) => {
 const getMyCrap = async (owner) => {
   const myCrap = await Crap.find({ owner }).populate("owner");
 
-  //sort by recent
+  myCrap.sort((a, b) => {
+    return b.createdAt - a.createdAt;
+  });
 
   return myCrap;
 };
