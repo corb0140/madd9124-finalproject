@@ -16,7 +16,7 @@ const createCrap = async (body, files) => {
 
   const crap = new Crap(body);
 
-  crap.status = "available";
+  crap.status = "AVAILABLE";
 
   const lat = crap.location.coordinates[0];
   const long = crap.location.coordinates[1];
@@ -39,8 +39,8 @@ const interested = async (id, ownerId) => {
   if (foundCrap) {
     const status = foundCrap.status;
 
-    if (status === "available") {
-      foundCrap.status = "interested";
+    if (status === "AVAILABLE") {
+      foundCrap.status = "INTERESTED";
       foundCrap.buyer = ownerId;
       await foundCrap.save();
       return foundCrap;
@@ -56,15 +56,16 @@ const suggest = async (id, ownerId) => {
   if (foundCrap) {
     const status = foundCrap.status;
 
-    if (status === "interested") {
+    if (status === "INTERESTED") {
       if (foundCrap.buyer.toString() !== ownerId.toString()) {
         throw new ForbiddenError("You are not allowed to suggest this crap");
       } else {
-        foundCrap.status = "scheduled";
+        foundCrap.status = "SCHEDULED";
 
         foundCrap.suggestion = {
           address: "baseline, ottawa",
           date: new Date(),
+          time: "12:00 AM",
         };
 
         await foundCrap.save();
@@ -82,32 +83,34 @@ const agree = async (id, ownerId) => {
   if (foundCrap) {
     const status = foundCrap.status;
 
-    if (status === "scheduled") {
+    if (status === "SCHEDULED") {
       if (foundCrap.owner.toString() !== ownerId.toString()) {
         throw new ForbiddenError("You are not allowed to agree to this crap");
       } else {
-        const crapLocation = foundCrap.location.coordinates;
+        foundCrap.status = "AGREED";
+        await foundCrap.save();
+        return foundCrap;
+      }
+    } else {
+      throw new BadRequestError("Crap is not scheduled");
+    }
+  }
+};
 
-        const within = await Crap.findOne({
-          location: {
-            $near: {
-              $geometry: { type: "Point", coordinates: crapLocation },
-              $maxDistance: 1000,
-            },
-          },
-        });
+const disagree = async (id, ownerId) => {
+  const foundCrap = await Crap.findById(id);
 
-        if (within) {
-          console.log("location is within 1km");
-          foundCrap.status = "agreed";
-          await foundCrap.save();
-          return foundCrap;
-        } else {
-          console.log("location is not within 1km");
-          foundCrap.status = "interested";
-          await foundCrap.save();
-          return foundCrap;
-        }
+  if (foundCrap) {
+    const status = foundCrap.status;
+
+    if (status === "SCHEDULED") {
+      if (foundCrap.owner.toString() !== ownerId.toString()) {
+        throw new ForbiddenError("You are not allowed to agree to this crap");
+      } else {
+        foundCrap.status = "INTERESTED";
+        foundCrap.suggestion = null;
+        await foundCrap.save();
+        return foundCrap;
       }
     } else {
       throw new BadRequestError("Crap is not scheduled");
@@ -121,11 +124,11 @@ const reset = async (id, ownerId) => {
   if (foundCrap) {
     const status = foundCrap.status;
 
-    if (status !== "flushed") {
+    if (status !== "FLUSHED") {
       if (foundCrap.owner.toString() !== ownerId.toString()) {
         throw new ForbiddenError("You are not allowed to reset this crap");
       } else {
-        foundCrap.status = "available";
+        foundCrap.status = "AVAILABLE";
         foundCrap.buyer = null;
         foundCrap.suggestion = null;
         await foundCrap.save();
@@ -143,11 +146,11 @@ const flush = async (id, ownerId) => {
   if (foundCrap) {
     const status = foundCrap.status;
 
-    if (status === "agreed") {
+    if (status === "AGREED") {
       if (foundCrap.owner.toString() !== ownerId.toString()) {
         throw new ForbiddenError("You are not allowed to flush this crap");
       } else {
-        foundCrap.status = "flushed";
+        foundCrap.status = "FLUSHED";
         await foundCrap.save();
         return foundCrap;
       }
@@ -167,7 +170,7 @@ const getAllCrap = async (query, lat, long, distance, show_taken) => {
         },
       },
       title: query,
-      status: "available",
+      status: "AVAILABLE",
     })
       .select("-location -buyer -suggestion")
       .populate("owner");
@@ -184,7 +187,7 @@ const getAllCrap = async (query, lat, long, distance, show_taken) => {
         },
       },
       title: query,
-      status: { $ne: "flushed" },
+      status: { $ne: "FLUSHED" },
     })
       .select("-location -buyer -suggestion")
       .populate("owner");
@@ -213,6 +216,8 @@ const getOneCrap = async (id, ownerId) => {
 
 const getMyCrap = async (owner) => {
   const myCrap = await Crap.find({ owner }).populate("owner");
+
+  //sort by recent
 
   return myCrap;
 };
@@ -262,6 +267,7 @@ module.exports = {
   interested,
   suggest,
   agree,
+  disagree,
   reset,
   flush,
 };

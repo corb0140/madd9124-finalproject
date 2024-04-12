@@ -23,6 +23,7 @@ const suggestionSchema = new mongoose.Schema(
       maxLength: 255,
     },
     date: { type: Date, required: true },
+    time: { type: String, required: true },
   },
   { _id: false }
 );
@@ -38,7 +39,13 @@ const crapSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["available", "interested", "scheduled", "agreed", "flushed"],
+      enum: {
+        AVAILABLE: "AVAILABLE",
+        INTERESTED: "INTERESTED",
+        SCHEDULED: "SCHEDULED",
+        AGREED: "AGREED",
+        FLUSHED: "FLUSHED",
+      },
       required: true,
     },
     owner: {

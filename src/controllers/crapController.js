@@ -63,6 +63,20 @@ const agree = async (req, res, next) => {
   }
 };
 
+const disagree = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const ownerId = req.user._id.toString();
+    const disagreedCrap = await crapService.disagree(id, ownerId);
+
+    res.json({
+      data: disagreedCrap,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 const reset = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -177,6 +191,7 @@ module.exports = {
   interested,
   suggest,
   agree,
+  disagree,
   reset,
   flush,
 };
