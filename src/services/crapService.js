@@ -50,7 +50,7 @@ const interested = async (id, ownerId) => {
   }
 };
 
-const suggest = async (id, ownerId) => {
+const suggest = async (id, ownerId, body) => {
   const foundCrap = await Crap.findById(id);
 
   if (foundCrap) {
@@ -62,10 +62,13 @@ const suggest = async (id, ownerId) => {
       } else {
         foundCrap.status = "SCHEDULED";
 
+        // get address from the request body
+        const { address, time } = body;
+
         foundCrap.suggestion = {
-          address: "baseline, ottawa",
+          address: address,
           date: new Date(),
-          time: "12:00 AM",
+          time: time,
         };
 
         await foundCrap.save();

@@ -39,7 +39,7 @@ const suggest = async (req, res, next) => {
   try {
     const { id } = req.params;
     const ownerId = req.user._id.toString();
-    const suggestedCrap = await crapService.suggest(id, ownerId);
+    const suggestedCrap = await crapService.suggest(id, ownerId, req.body);
 
     res.json({
       data: suggestedCrap,
