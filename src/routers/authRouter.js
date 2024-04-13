@@ -6,7 +6,7 @@ const authController = require("../controllers/authController");
 const authRouter = Router();
 
 authRouter.get(
-  "/google?redirect_url='http://localhost:3000",
+  "/google?redirect_url=http://localhost:3000",
   (req, res, next) => {
     const { redirect_url } = req.query;
 
