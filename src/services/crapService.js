@@ -62,7 +62,6 @@ const suggest = async (id, ownerId, body) => {
       } else {
         foundCrap.status = "SCHEDULED";
 
-        // get address from the request body
         const { address, time } = body;
 
         foundCrap.suggestion = {
@@ -174,18 +173,29 @@ const getAllCrap = async (query, lat, long, distance, show_taken) => {
       },
       title: query,
       status: "AVAILABLE",
-    })
-      .select(" -buyer -suggestion")
-      .populate("owner");
+    }).populate("owner");
 
-    const sort = crapResults.sort((a, b) => {
+    const sortCraps = crapResults.sort((a, b) => {
       const distanceA = a.location.coordinates[0] - lat;
       const distanceB = b.location.coordinates[0] - lat;
 
       return distanceA - distanceB;
     });
 
-    return sort;
+    const craps = sortCraps.map((crap) => {
+      return {
+        _id: crap._id,
+        title: crap.title,
+        description: crap.description,
+        images: crap.images,
+        status: crap.status,
+        owner: crap.owner,
+        createdAt: crap.createdAt,
+        updatedAt: crap.updatedAt,
+      };
+    });
+
+    return craps;
   }
 
   if (query && show_taken === "false") {
@@ -198,11 +208,29 @@ const getAllCrap = async (query, lat, long, distance, show_taken) => {
       },
       title: query,
       status: { $ne: "FLUSHED" },
-    })
-      .select("-location -buyer -suggestion")
-      .populate("owner");
+    }).populate("owner");
 
-    return crapResults;
+    const sortCraps = crapResults.sort((a, b) => {
+      const distanceA = a.location.coordinates[0] - lat;
+      const distanceB = b.location.coordinates[0] - lat;
+
+      return distanceA - distanceB;
+    });
+
+    const craps = sortCraps.map((crap) => {
+      return {
+        _id: crap._id,
+        title: crap.title,
+        description: crap.description,
+        images: crap.images,
+        status: crap.status,
+        owner: crap.owner,
+        createdAt: crap.createdAt,
+        updatedAt: crap.updatedAt,
+      };
+    });
+
+    return craps;
   }
 };
 
