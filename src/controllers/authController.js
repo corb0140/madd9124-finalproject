@@ -35,7 +35,7 @@ const googleCallback = (req, res) => {
 
   const { redirect_url } = state
     ? JSON.parse(Buffer.from(state, "base64").toString())
-    : "http://localhost:3000";
+    : {};
 
   const token = authService.generateToken(req.user._id);
 
