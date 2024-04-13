@@ -33,9 +33,11 @@ const register = async (req, res, next) => {
 const googleCallback = (req, res) => {
   const { state } = req.query;
 
-  const { redirect_url } = state
-    ? JSON.parse(Buffer.from(state, "base64").toString())
-    : {};
+  const { redirect_url } = state ?? "http://localhost:3000";
+
+  // const { redirect_url } = state
+  //   ? JSON.parse(Buffer.from(state, "base64").toString())
+  //   : {};
 
   const token = authService.generateToken(req.user._id);
 
