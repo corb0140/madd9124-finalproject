@@ -16,8 +16,8 @@ crapRouter.use(isAuthenticated);
 crapRouter.get("/", crapController.getAllCrap);
 
 crapRouter.get("/", crapController.getAllCrap);
-crapRouter.get("/:id", isValidObjectId, crapController.getOneCrap);
 crapRouter.get("/mine", crapController.getMyCrap);
+crapRouter.get("/:id", isValidObjectId, crapController.getOneCrap);
 
 crapRouter.post(
   "/",
