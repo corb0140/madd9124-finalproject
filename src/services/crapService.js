@@ -36,6 +36,10 @@ const createCrap = async (body, files) => {
 const interested = async (id, ownerId) => {
   const foundCrap = await Crap.findById(id);
 
+  if (foundCrap.owner.toString() === ownerId) {
+    throw new ForbiddenError("You cannot show interest in your own crap");
+  }
+
   if (foundCrap) {
     const status = foundCrap.status;
 
