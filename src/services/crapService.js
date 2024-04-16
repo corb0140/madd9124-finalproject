@@ -61,16 +61,16 @@ const suggest = async (id, ownerId, body) => {
     const status = foundCrap.status;
 
     if (status === "INTERESTED") {
-      if (foundCrap.buyer.toString() !== ownerId.toString()) {
+      if (foundCrap.buyer.toString() === ownerId.toString()) {
         throw new ForbiddenError("You are not allowed to suggest this crap");
       } else {
         foundCrap.status = "SCHEDULED";
 
-        const { address, time } = body;
+        const { address, date, time } = body;
 
         foundCrap.suggestion = {
           address: address,
-          date: new Date(),
+          date: date,
           time: time,
         };
 
@@ -90,8 +90,10 @@ const agree = async (id, ownerId) => {
     const status = foundCrap.status;
 
     if (status === "SCHEDULED") {
-      if (foundCrap.owner.toString() !== ownerId.toString()) {
-        throw new ForbiddenError("You are not allowed to agree to this crap");
+      if (foundCrap.owner.toString() === ownerId.toString()) {
+        throw new ForbiddenError(
+          "You are the seller, you are not allowed to agree to this crap"
+        );
       } else {
         foundCrap.status = "AGREED";
         await foundCrap.save();
@@ -110,8 +112,10 @@ const disagree = async (id, ownerId) => {
     const status = foundCrap.status;
 
     if (status === "SCHEDULED") {
-      if (foundCrap.owner.toString() !== ownerId.toString()) {
-        throw new ForbiddenError("You are not allowed to agree to this crap");
+      if (foundCrap.owner.toString() === ownerId.toString()) {
+        throw new ForbiddenError(
+          "You are the seller, you not allowed to disagree to this crap"
+        );
       } else {
         foundCrap.status = "INTERESTED";
         foundCrap.suggestion = null;
@@ -258,12 +262,18 @@ const getOneCrap = async (id, ownerId) => {
 
 const getMyCrap = async (owner) => {
   const myCrap = await Crap.find({ owner }).populate("owner");
+  const crapImInterestedIn = await Crap.find({
+    buyer: owner,
+    status: { $ne: "AVAILABLE" },
+  }).populate("owner");
 
-  myCrap.sort((a, b) => {
+  const myCraps = myCrap.concat(crapImInterestedIn);
+
+  myCraps.sort((a, b) => {
     return b.createdAt - a.createdAt;
   });
 
-  return myCrap;
+  return myCraps;
 };
 
 const updateCrap = async (id, ownerId, updates) => {
