@@ -181,7 +181,7 @@ const getAllCrap = async (query, lat, long, distance, show_taken) => {
       },
       title: query,
       status: "AVAILABLE",
-    }).populate("owner");
+    }).populate({ path: "owner", select: "name" });
 
     const sortCraps = crapResults.sort((a, b) => {
       const distanceA = a.location.coordinates[0] - lat;
@@ -216,7 +216,7 @@ const getAllCrap = async (query, lat, long, distance, show_taken) => {
       },
       title: query,
       status: { $ne: "FLUSHED" },
-    }).populate("owner");
+    }).populate({ path: "owner", select: "name" });
 
     const sortCraps = crapResults.sort((a, b) => {
       const distanceA = a.location.coordinates[0] - lat;
@@ -246,21 +246,21 @@ const getOneCrap = async (id, ownerId) => {
   const crap = await Crap.findById(id);
 
   if (crap.owner.toString() === ownerId) {
-    return crap.populate("owner");
+    return crap.populate({ path: "owner", select: "name" });
   }
 
   if (crap.owner.toString() !== ownerId && crap.status === "AGREED") {
-    return Crap.findById(id).select("-location -buyer").populate("owner");
-  }
-
-  if (crap.owner.toString() !== ownerId && crap.status === "SCHEDULED") {
-    return Crap.findById(id).select("-location -buyer").populate("owner");
-  }
-
-  if (crap.owner.toString() !== ownerId) {
+    return Crap.findById(id)
+      .select("-location -buyer")
+      .populate({ path: "owner", select: "name" });
+  } else if (crap.owner.toString() !== ownerId && crap.status === "SCHEDULED") {
+    return Crap.findById(id)
+      .select("-location -buyer")
+      .populate({ path: "owner", select: "name" });
+  } else if (crap.owner.toString() !== ownerId) {
     return Crap.findById(id)
       .select("-location -buyer -suggestion")
-      .populate("owner");
+      .populate({ path: "owner", select: "name" });
   }
 
   if (!crap) {
