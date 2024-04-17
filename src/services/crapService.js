@@ -249,6 +249,14 @@ const getOneCrap = async (id, ownerId) => {
     return crap.populate("owner");
   }
 
+  if (crap.owner.toString() !== ownerId && crap.status === "AGREED") {
+    return Crap.findById(id).select("-location -buyer").populate("owner");
+  }
+
+  if (crap.owner.toString() !== ownerId && crap.status === "SCHEDULED") {
+    return Crap.findById(id).select("-location -buyer").populate("owner");
+  }
+
   if (crap.owner.toString() !== ownerId) {
     return Crap.findById(id)
       .select("-location -buyer -suggestion")
