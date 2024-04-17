@@ -171,7 +171,7 @@ const flush = async (id, ownerId) => {
 };
 
 const getAllCrap = async (query, lat, long, distance, show_taken) => {
-  if (query && show_taken === "true") {
+  if ((!query && show_taken === "true") || (!query && show_taken === "false")) {
     const crapResults = await Crap.find({
       location: {
         $near: {
@@ -179,8 +179,9 @@ const getAllCrap = async (query, lat, long, distance, show_taken) => {
           $maxDistance: distance,
         },
       },
-      title: query,
-      status: "AVAILABLE",
+      status:
+        (show_taken === "true" && "AVAILABLE") ||
+        (show_taken === "false" && { $ne: "FLUSHED" }),
     }).populate({ path: "owner", select: "name" });
 
     const sortCraps = crapResults.sort((a, b) => {
@@ -206,7 +207,9 @@ const getAllCrap = async (query, lat, long, distance, show_taken) => {
     return craps;
   }
 
-  if (query && show_taken === "false") {
+  const queryPattern = new RegExp(".*" + query + ".*");
+
+  if ((query && show_taken === "true") || (query && show_taken === "false")) {
     const crapResults = await Crap.find({
       location: {
         $near: {
@@ -214,8 +217,10 @@ const getAllCrap = async (query, lat, long, distance, show_taken) => {
           $maxDistance: distance,
         },
       },
-      title: query,
-      status: { $ne: "FLUSHED" },
+      title: queryPattern,
+      status:
+        (show_taken === "true" && "AVAILABLE") ||
+        (show_taken === "false" && { $ne: "FLUSHED" }),
     }).populate({ path: "owner", select: "name" });
 
     const sortCraps = crapResults.sort((a, b) => {
