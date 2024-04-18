@@ -108,12 +108,12 @@ const flush = async (req, res, next) => {
 
 const getAllCrap = async (req, res, next) => {
   try {
-    const { query, lat, long, distance, show_taken } = req.query;
+    const { query, long, lat, distance, show_taken } = req.query;
 
     const crap = await crapService.getAllCrap(
       query,
-      lat,
       long,
+      lat,
       distance,
       show_taken
     );

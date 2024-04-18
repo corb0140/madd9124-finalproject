@@ -18,11 +18,11 @@ const createCrap = async (body, files) => {
 
   crap.status = "AVAILABLE";
 
-  const lat = crap.location.coordinates[0];
-  const long = crap.location.coordinates[1];
+  const long = crap.location.coordinates[0];
+  const lat = crap.location.coordinates[1];
   crap.location = {
     type: "Point",
-    coordinates: [lat, long],
+    coordinates: [long, lat],
   };
 
   const urls = await imageService.uploadImages(files);
@@ -170,12 +170,12 @@ const flush = async (id, ownerId) => {
   }
 };
 
-const getAllCrap = async (query, lat, long, distance, show_taken) => {
+const getAllCrap = async (query, long, lat, distance, show_taken) => {
   if ((!query && show_taken === "true") || (!query && show_taken === "false")) {
     const crapResults = await Crap.find({
       location: {
         $near: {
-          $geometry: { type: "Point", coordinates: [lat, long] },
+          $geometry: { type: "Point", coordinates: [long, lat] },
           $maxDistance: distance,
         },
       },
@@ -195,6 +195,7 @@ const getAllCrap = async (query, lat, long, distance, show_taken) => {
       return {
         _id: crap._id,
         title: crap.title,
+        location: crap.location,
         description: crap.description,
         images: crap.images,
         status: crap.status,
@@ -213,7 +214,7 @@ const getAllCrap = async (query, lat, long, distance, show_taken) => {
     const crapResults = await Crap.find({
       location: {
         $near: {
-          $geometry: { type: "Point", coordinates: [lat, long] },
+          $geometry: { type: "Point", coordinates: [long, lat] },
           $maxDistance: distance,
         },
       },
