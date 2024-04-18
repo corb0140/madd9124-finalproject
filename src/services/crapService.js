@@ -51,6 +51,8 @@ const interested = async (id, ownerId) => {
     } else {
       throw new BadRequestError("Crap is not available");
     }
+  } else {
+    throw new NotFoundError(`Crap with id ${id} not found`);
   }
 };
 
@@ -80,6 +82,8 @@ const suggest = async (id, ownerId, body) => {
     } else {
       throw new BadRequestError("No one is interested in this crap");
     }
+  } else {
+    throw new NotFoundError(`Crap with id ${id} not found`);
   }
 };
 
@@ -102,6 +106,8 @@ const agree = async (id, ownerId) => {
     } else {
       throw new BadRequestError("Crap is not scheduled");
     }
+  } else {
+    throw new NotFoundError(`Crap with id ${id} not found`);
   }
 };
 
@@ -125,6 +131,8 @@ const disagree = async (id, ownerId) => {
     } else {
       throw new BadRequestError("Crap is not scheduled");
     }
+  } else {
+    throw new NotFoundError(`Crap with id ${id} not found`);
   }
 };
 
@@ -147,6 +155,8 @@ const reset = async (id, ownerId) => {
     } else {
       throw new BadRequestError("Crap is not agreed");
     }
+  } else {
+    throw new NotFoundError(`Crap with id ${id} not found`);
   }
 };
 
@@ -167,6 +177,8 @@ const flush = async (id, ownerId) => {
     } else {
       throw new BadRequestError("Crap is not agreed");
     }
+  } else {
+    throw new NotFoundError(`Crap with id ${id} not found`);
   }
 };
 
@@ -182,16 +194,11 @@ const getAllCrap = async (query, long, lat, distance, show_taken) => {
       status:
         (show_taken === "false" && "AVAILABLE") ||
         (show_taken === "true" && { $ne: "FLUSHED" }),
-    }).populate({ path: "owner", select: "name" });
+    })
+      .populate({ path: "owner", select: "name" })
+      .sort();
 
-    const sortCraps = crapResults.sort((a, b) => {
-      const distanceA = a.location.coordinates[0] - lat;
-      const distanceB = b.location.coordinates[0] - lat;
-
-      return distanceA - distanceB;
-    });
-
-    const craps = sortCraps.map((crap) => {
+    const craps = crapResults.map((crap) => {
       return {
         _id: crap._id,
         title: crap.title,
@@ -223,16 +230,11 @@ const getAllCrap = async (query, long, lat, distance, show_taken) => {
       status:
         (show_taken === "false" && "AVAILABLE") ||
         (show_taken === "true" && { $ne: "FLUSHED" }),
-    }).populate({ path: "owner", select: "name" });
+    })
+      .populate({ path: "owner", select: "name" })
+      .sort();
 
-    const sortCraps = crapResults.sort((a, b) => {
-      const distanceA = a.location.coordinates[0] - lat;
-      const distanceB = b.location.coordinates[0] - lat;
-
-      return distanceA - distanceB;
-    });
-
-    const craps = sortCraps.map((crap) => {
+    const craps = crapResults.map((crap) => {
       return {
         _id: crap._id,
         title: crap.title,
