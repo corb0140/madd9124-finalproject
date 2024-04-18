@@ -195,7 +195,6 @@ const getAllCrap = async (query, long, lat, distance, show_taken) => {
       return {
         _id: crap._id,
         title: crap.title,
-        location: crap.location,
         description: crap.description,
         images: crap.images,
         status: crap.status,
