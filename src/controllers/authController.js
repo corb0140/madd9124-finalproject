@@ -1,35 +1,5 @@
 const authService = require("../services/authService");
 
-const login = async (req, res, next) => {
-  try {
-    const { username, password } = req.body;
-    const token = await authService.login(username, password);
-
-    res.json({
-      data: {
-        token,
-      },
-    });
-  } catch (err) {
-    next(err);
-  }
-};
-
-const register = async (req, res, next) => {
-  try {
-    const { username, password } = req.body;
-    const token = await authService.register(username, password);
-
-    res.json({
-      data: {
-        token,
-      },
-    });
-  } catch (err) {
-    next(err);
-  }
-};
-
 const googleCallback = (req, res) => {
   const { state } = req.query;
 
@@ -43,7 +13,5 @@ const googleCallback = (req, res) => {
 };
 
 module.exports = {
-  login,
-  register,
   googleCallback,
 };
