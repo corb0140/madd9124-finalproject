@@ -217,7 +217,9 @@ const getAllCrap = async (query, long, lat, distance, show_taken) => {
           $maxDistance: distance,
         },
       },
-      title: queryPattern,
+
+      $or: [{ title: queryPattern }, { description: queryPattern }],
+
       status:
         (show_taken === "true" && "AVAILABLE") ||
         (show_taken === "false" && { $ne: "FLUSHED" }),
