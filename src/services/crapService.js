@@ -180,8 +180,8 @@ const getAllCrap = async (query, long, lat, distance, show_taken) => {
         },
       },
       status:
-        (show_taken === "true" && "AVAILABLE") ||
-        (show_taken === "false" && { $ne: "FLUSHED" }),
+        (show_taken === "false" && "AVAILABLE") ||
+        (show_taken === "true" && { $ne: "FLUSHED" }),
     }).populate({ path: "owner", select: "name" });
 
     const sortCraps = crapResults.sort((a, b) => {
@@ -221,8 +221,8 @@ const getAllCrap = async (query, long, lat, distance, show_taken) => {
       $or: [{ title: queryPattern }, { description: queryPattern }],
 
       status:
-        (show_taken === "true" && "AVAILABLE") ||
-        (show_taken === "false" && { $ne: "FLUSHED" }),
+        (show_taken === "false" && "AVAILABLE") ||
+        (show_taken === "true" && { $ne: "FLUSHED" }),
     }).populate({ path: "owner", select: "name" });
 
     const sortCraps = crapResults.sort((a, b) => {
