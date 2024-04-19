@@ -194,7 +194,7 @@ const getAllCrap = async (query, long, lat, distance, show_taken) => {
         (show_taken === "true" && { $ne: "FLUSHED" }),
     })
       .populate({ path: "owner", select: "name" })
-      .sort();
+      .sort({ location: 1 });
 
     const craps = crapResults.map((crap) => {
       return {
@@ -230,7 +230,7 @@ const getAllCrap = async (query, long, lat, distance, show_taken) => {
         (show_taken === "true" && { $ne: "FLUSHED" }),
     })
       .populate({ path: "owner", select: "name" })
-      .sort();
+      .sort({ location: 1 });
 
     const craps = crapResults.map((crap) => {
       return {
@@ -263,7 +263,9 @@ const getOneCrap = async (id, ownerId) => {
     return Crap.findById(id)
       .select("-location -buyer")
       .populate({ path: "owner", select: "name" });
-  } else if (crap.owner.toString() !== ownerId) {
+  }
+
+  if (crap.owner.toString() !== ownerId) {
     return Crap.findById(id)
       .select("-location -buyer -suggestion")
       .populate({ path: "owner", select: "name" });
