@@ -212,7 +212,7 @@ const getAllCrap = async (query, long, lat, distance, show_taken) => {
     return craps;
   }
 
-  const queryPattern = new RegExp(".*" + query + ".*");
+  const queryPattern = new RegExp(".*" + query + ".*", "i");
 
   if ((query && show_taken === "true") || (query && show_taken === "false")) {
     const crapResults = await Crap.find({
