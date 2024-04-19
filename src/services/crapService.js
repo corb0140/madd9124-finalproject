@@ -256,11 +256,10 @@ const getOneCrap = async (id, ownerId) => {
     return crap.populate({ path: "owner", select: "name" });
   }
 
-  if (crap.owner.toString() !== ownerId && crap.status === "AGREED") {
-    return Crap.findById(id)
-      .select("-location -buyer")
-      .populate({ path: "owner", select: "name" });
-  } else if (crap.owner.toString() !== ownerId && crap.status === "SCHEDULED") {
+  if (
+    (crap.owner.toString() !== ownerId && crap.status === "AGREED") ||
+    (crap.owner.toString() !== ownerId && crap.status === "SCHEDULED")
+  ) {
     return Crap.findById(id)
       .select("-location -buyer")
       .populate({ path: "owner", select: "name" });
