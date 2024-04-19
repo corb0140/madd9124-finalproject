@@ -155,8 +155,6 @@ const reset = async (id, ownerId) => {
     } else {
       throw new BadRequestError("Crap is not agreed");
     }
-  } else {
-    throw new NotFoundError(`Crap with id ${id} not found`);
   }
 };
 
